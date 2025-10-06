@@ -22,8 +22,8 @@ void ATwinStickController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	/*if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
 		Subsystem->AddMappingContext(MappingContext, 0);
-	}*/
+	}
 }

@@ -4,18 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "EnhancedInputSubsystems.h"
 #include "TwinStickController.generated.h"
-//#include "EnhancedInputSubsystems.generated.h"
+
 
 /**
  * 
  */
+
 UCLASS()
 class CPP_UNREAL_API ATwinStickController : public APlayerController
 {
 	GENERATED_BODY()
-
+	
 protected:
+
 	virtual void BeginPlay() override;
 	
 	virtual void Tick(float DeltaTime) override;
@@ -24,5 +27,7 @@ protected:
 
 	virtual void SetupInputComponent() override;
 
-	/*UInputMappingContext* MappingContext;*/
+	UPROPERTY(EditDefaultsOnly, Category="Input Mapping")
+	//UInputMappingContext* MappingContext;
+	TObjectPtr<UInputMappingContext> MappingContext;
 };
