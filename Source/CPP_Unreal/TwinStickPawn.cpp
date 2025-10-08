@@ -32,6 +32,20 @@ void ATwinStickPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 }
 
+void ATwinStickPawn::ActivateMouse_Implementation(bool MouseActive)
+{
+	//UsingMouse = MouseActive;
+
+	if (MouseActive)
+	{
+		// Receive Input
+	}
+	else
+	{
+		// do a flip or something
+	}
+}
+
 void ATwinStickPawn::DoMove_Implementation(FVector2D Input)
 {
 	LastMoveInput.X = Input.X;
@@ -41,4 +55,18 @@ void ATwinStickPawn::DoMove_Implementation(FVector2D Input)
 
 	GetMovementComponent()->AddInputVector(MoveDirection.RotateVector(FVector::ForwardVector) * Input.X);
 	GetMovementComponent()->AddInputVector(MoveDirection.RotateVector(FVector::RightVector) * Input.Y);
+}
+
+void ATwinStickPawn::ActivateDash_Implementation(bool DashActive)
+{
+	UsingDash = DashActive;
+
+	if (DashActive)
+	{
+		// Dash logic
+	}
+	else
+	{
+		// slowwwwww downnnn
+	}
 }

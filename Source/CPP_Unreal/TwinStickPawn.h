@@ -22,9 +22,19 @@ protected:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void DoMove(FVector2D Input);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ActivateMouse(bool MouseActive);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void ActivateDash(bool DashActive);
 	
 public:
 	FVector LastMoveInput = FVector(0.0f, 0.0f, 0.0f);
+
+	bool UsingMouse = false;
+
+	bool UsingDash = false;
 	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
