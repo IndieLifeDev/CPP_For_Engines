@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CPP_PlayerInterface.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "TwinStickPawn.generated.h"
 
 UCLASS()
-class CPP_UNREAL_API ATwinStickPawn : public APawn
+class CPP_UNREAL_API ATwinStickPawn : public APawn, public ICPP_PlayerInterface
 {
 	GENERATED_BODY()
 
@@ -41,5 +42,10 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual void SetActorOverlapEvent_Implementation(AActor* OverlappedActor) override;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<AActor> MyOverlappedActorRef;
 
 };

@@ -28,6 +28,5 @@ protected:
 	virtual void SetupInputComponent() override;
 
 	UPROPERTY(EditDefaultsOnly, Category="Input Mapping")
-	//UInputMappingContext* MappingContext;
 	TObjectPtr<UInputMappingContext> MappingContext;
 };

@@ -6,6 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "TwinStickGamemode.generated.h"
 
+class AMyCheckpoint;
+
 /**
  * 
  */
@@ -14,7 +16,13 @@ class CPP_UNREAL_API ATwinStickGamemode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-public:
 	ATwinStickGamemode();
+
+public:
+	void RegisterCheckpoint(AMyCheckpoint* checkpointActor);
+
+	UFUNCTION()
+	void FinishGame(FString EndMessage);
+	
 	
 };

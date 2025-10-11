@@ -32,6 +32,12 @@ void ATwinStickPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 }
 
+void ATwinStickPawn::SetActorOverlapEvent_Implementation(AActor* OverlappedActor)
+{
+	ICPP_PlayerInterface::SetActorOverlapEvent_Implementation(OverlappedActor);
+	MyOverlappedActorRef = OverlappedActor;
+}
+
 void ATwinStickPawn::ActivateMouse_Implementation(bool MouseActive)
 {
 	//UsingMouse = MouseActive;
