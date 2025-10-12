@@ -3,6 +3,9 @@
 
 #include "TwinStickPawn.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
+
 // Sets default values
 ATwinStickPawn::ATwinStickPawn()
 {
@@ -15,13 +18,42 @@ ATwinStickPawn::ATwinStickPawn()
 void ATwinStickPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	MyPC_Ref = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 }
 
 // Called every frame
 void ATwinStickPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	OldRotation = FRotator(GetActorRotation());
+	if (bIsUsingMouse)
+	{
+		if (!MyPC_Ref)
+		{
+			return;
+		}
+
+		FHitResult Hit;
+		if (MyPC_Ref->GetHitResultUnderCursorByChannel(TraceChannel, true, Hit))
+		{
+			const FVector HitLocation = Hit.Location;
+			const FVector OwnerLocation = GetActorLocation();
+
+			FRotator LookAt = UKismetMathLibrary::FindLookAtRotation(OwnerLocation, HitLocation);
+
+			AimAngle = LookAt.Yaw;
+
+			FRotator NewRotation = FRotator(OldRotation.Pitch, AimAngle, OldRotation.Roll);
+			SetActorRotation(NewRotation);
+		}
+		else
+		{
+			FRotator NewRotation = FRotator(OldRotation.Pitch, AimAngle, OldRotation.Roll);
+			SetActorRotation(NewRotation);
+		}
+	}
 
 }
 
@@ -65,7 +97,7 @@ void ATwinStickPawn::DoMove_Implementation(FVector2D Input)
 
 void ATwinStickPawn::ActivateDash_Implementation(bool DashActive)
 {
-	UsingDash = DashActive;
+	bIsDashing = DashActive;
 
 	if (DashActive)
 	{

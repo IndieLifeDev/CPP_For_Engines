@@ -8,6 +8,12 @@
 #include "GameFramework/PawnMovementComponent.h"
 #include "TwinStickPawn.generated.h"
 
+class UFloatingPawnMovement;
+class USphereComponent;
+class UCameraComponent;
+class USpringArmComponent;
+class UStaticMeshComponent;
+
 UCLASS()
 class CPP_UNREAL_API ATwinStickPawn : public APawn, public ICPP_PlayerInterface
 {
@@ -16,6 +22,21 @@ class CPP_UNREAL_API ATwinStickPawn : public APawn, public ICPP_PlayerInterface
 public:
 	// Sets default values for this pawn's properties
 	ATwinStickPawn();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<USpringArmComponent> SpringArm;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UCameraComponent> Camera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<USphereComponent> Sphere;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UStaticMeshComponent> StaticMesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UFloatingPawnMovement> Movement;
 
 protected:
 	// Called when the game starts or when spawned
@@ -31,12 +52,6 @@ protected:
 	void ActivateDash(bool DashActive);
 	
 public:
-	FVector LastMoveInput = FVector(0.0f, 0.0f, 0.0f);
-
-	bool UsingMouse = false;
-
-	bool UsingDash = false;
-	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -47,5 +62,22 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<AActor> MyOverlappedActorRef;
+
+	UPROPERTY()
+	TObjectPtr<APlayerController> MyPC_Ref = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Aim")
+	TEnumAsByte<ETraceTypeQuery> TraceChannel = TraceTypeQuery1;
+
+private:
+	FVector LastMoveInput = FVector(0.0f, 0.0f, 0.0f);
+
+	float AimAngle = 0.0f;
+
+	FRotator OldRotation;
+	
+	bool bIsUsingMouse = false; // Will be set and/or unset in a different function
+
+	bool bIsDashing = false;
 
 };
