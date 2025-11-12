@@ -4,6 +4,7 @@
 #include "TurretBase.h"
 #include "ProjectileBase.h"
 #include "Components/ArrowComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -22,13 +23,21 @@ ATurretBase::ATurretBase()
 
 	FirePoint = CreateDefaultSubobject<UArrowComponent>(TEXT("FirePoint"));
 	FirePoint->SetupAttachment(BarrelMeshComponent);
-	FirePoint->SetRelativeScale3D(FVector(0.5f));
+	FirePoint->SetRelativeLocation(FVector(280.0f, 0.0f, 0.0f));
 }
 
 // Called when the game starts or when spawned
 void ATurretBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	/*if (UWorld* World = GetWorld())
+	{
+		if (UTurretWorldManager* Manager = World->GetSubsystem<UTurretWorldManager>())
+		{
+			Manager-=>RegisterTurret(this);
+		}
+	}*/
 
 	GetWorldTimerManager().SetTimer(FireTimer, this, &ATurretBase::Fire_Implementation, FireSpeed, true);
 	
@@ -38,14 +47,6 @@ void ATurretBase::BeginPlay()
 void ATurretBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-}
-
-void ATurretBase::Fire_Implementation()
-{
-	const FVector Location = FirePoint->GetComponentLocation();
-	const FRotator Rotation = FirePoint->GetComponentRotation();
-
-	GetWorld()->SpawnActor(ProjectileClass, &Location, &Rotation);
 }
 
 void ATurretBase::SetTurretEnabled(bool bEnabled)
@@ -62,3 +63,20 @@ void ATurretBase::SetTurretEnabled(bool bEnabled)
 
 }
 
+void ATurretBase::Fire_Implementation()
+{
+	const FVector Location = FirePoint->GetComponentLocation();
+	const FRotator Rotation = FirePoint->GetComponentRotation();
+
+	GetWorld()->SpawnActor(ProjectileClass, &Location, &Rotation);
+
+	if (FireSound)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), FireSound, FireAudioVolume);
+	}
+
+	if (FireFX)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FireFX, Location, Rotation);
+	}
+}

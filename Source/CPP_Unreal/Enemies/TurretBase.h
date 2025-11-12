@@ -4,10 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
 #include "TurretBase.generated.h"
 
 class UArrowComponent;
 class AProjectileBase;
+class UNiagaraFunctionLibrary;
 
 UCLASS()
 class CPP_UNREAL_API ATurretBase : public AActor
@@ -43,6 +46,15 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "TurretData")
 	TSubclassOf<AProjectileBase> ProjectileClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TurretData")
+	TObjectPtr<USoundBase> FireSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = "TurretData")
+	float FireAudioVolume = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TurretData")
+	TObjectPtr<UNiagaraSystem> FireFX;
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = "TurretData")
 	void Fire();

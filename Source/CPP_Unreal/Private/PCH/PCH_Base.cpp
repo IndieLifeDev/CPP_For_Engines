@@ -91,10 +91,10 @@ void APCH_Base::LookAction_Implementation(const FInputActionInstance& Instance)
 	if (Controller)
 	{
 		const FVector2D AxisValue = Instance.GetValue().Get<FVector2D>();
-		if (AxisValue.Y != 0.0f)
+		/*if (AxisValue.Y != 0.0f)
 		{
 			AddControllerPitchInput(-AxisValue.Y); // Inverts Y Input
-		}
+		}*/
 		if (AxisValue.X != 0.0f)
 		{
 			AddControllerYawInput(AxisValue.X);
