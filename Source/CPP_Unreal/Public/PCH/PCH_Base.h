@@ -34,7 +34,9 @@ protected:
 	TObjectPtr<UHealthComponent> Health;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Speeds")
-	float WalkSpeed = 400.0f;
+	float DefaultSpeed = 400.0f;
+	float BoostSpeed = 800.0f;
+	//float BoostAcceleration = 800.0f;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Interactions")
 	TObjectPtr<AActor> OverlappingActor;
@@ -48,7 +50,7 @@ public:
 
 	virtual void MoveAction_Implementation(const FInputActionInstance& Instance) override;
 	virtual void LookAction_Implementation(const FInputActionInstance& Instance) override;
-	virtual void JumpAction_Implementation(const FInputActionInstance& Instance) override;
+	virtual void BoostAction_Implementation(const FInputActionInstance& Instance) override;
 	virtual void Action_Implementation(const FInputActionInstance& Instance) override;
 
 	UFUNCTION()

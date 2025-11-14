@@ -33,5 +33,5 @@ public:
 	void Move(const FInputActionInstance& Instance);
 	void Look(const FInputActionInstance& Instance);
 	void Action(const FInputActionInstance& Instance);
-	void Jump(const FInputActionInstance& Instance);
+	void Boost(const FInputActionInstance& Instance);
 };

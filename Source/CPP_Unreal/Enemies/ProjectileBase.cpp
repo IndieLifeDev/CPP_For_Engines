@@ -19,7 +19,8 @@ AProjectileBase::AProjectileBase()
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	SetRootComponent(SphereComponent);
 	SphereComponent->SetSphereRadius(64.0f);
-	SphereComponent->SetCollisionProfileName("BlockAllDynamic");
+	//SphereComponent->SetCollisionProfileName("BlockAllDynamic");
+	SphereComponent->SetCollisionProfileName("Custom");
 
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	StaticMeshComponent->SetupAttachment(SphereComponent);

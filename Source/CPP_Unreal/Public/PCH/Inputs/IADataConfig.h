@@ -21,7 +21,7 @@ public:
 	TSoftObjectPtr<UInputAction> Action;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSoftObjectPtr<UInputAction> Jump;
+	TSoftObjectPtr<UInputAction> Boost;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftObjectPtr<UInputAction> Move;

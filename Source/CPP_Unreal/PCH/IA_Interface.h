@@ -28,7 +28,7 @@ public:
 	void Action(const FInputActionInstance& Instance);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void JumpAction(const FInputActionInstance& Instance);
+	void BoostAction(const FInputActionInstance& Instance);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void MoveAction(const FInputActionInstance& Instance);

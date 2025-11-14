@@ -34,7 +34,7 @@ void APC_Base::SetupInputComponent()
 		PEI->BindAction(InputActions->Move.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::Move);
 		PEI->BindAction(InputActions->Look.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::Look);
 		PEI->BindAction(InputActions->Action.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::Action);
-		PEI->BindAction(InputActions->Jump.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::Jump);
+		PEI->BindAction(InputActions->Boost.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::Boost);
 		
 	}
 }
@@ -54,7 +54,7 @@ void APC_Base::Action(const FInputActionInstance& Instance)
 	IIA_Interface::Execute_Action(LocalPCH, Instance);
 }
 
-void APC_Base::Jump(const FInputActionInstance& Instance)
+void APC_Base::Boost(const FInputActionInstance& Instance)
 {
-	IIA_Interface::Execute_JumpAction(LocalPCH, Instance);
+	IIA_Interface::Execute_BoostAction(LocalPCH, Instance);
 }
