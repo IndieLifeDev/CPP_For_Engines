@@ -5,6 +5,7 @@
 #include "ProjectileBase.h"
 #include "Components/ArrowComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Managers/TurretWorldManager.h"
 
 
 // Sets default values
@@ -31,16 +32,29 @@ void ATurretBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	/*if (UWorld* World = GetWorld())
+	if (UWorld* World = GetWorld())
 	{
 		if (UTurretWorldManager* Manager = World->GetSubsystem<UTurretWorldManager>())
 		{
-			Manager-=>RegisterTurret(this);
+			Manager->RegisterTurret(this);
 		}
-	}*/
+	}
 
 	GetWorldTimerManager().SetTimer(FireTimer, this, &ATurretBase::Fire_Implementation, FireSpeed, true);
 	
+}
+
+void ATurretBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (UWorld* World = GetWorld())
+	{
+		if (UTurretWorldManager* Manager = World->GetSubsystem<UTurretWorldManager>())
+		{
+			Manager->UnregisterTurret(this);	
+		}
+	}
+
+	Super::EndPlay(EndPlayReason);
 }
 
 // Called every frame

@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "CPP_Unreal/PCH/HealthComponent.h"
+#include "Interactables/InteractionInterface.h"
 #include "PCH/PC_Base.h"
 
 
@@ -105,9 +106,8 @@ void APCH_Base::LookAction_Implementation(const FInputActionInstance& Instance)
 void APCH_Base::BoostAction_Implementation(const FInputActionInstance& Instance)
 {
 	IIA_Interface::BoostAction_Implementation(Instance);
-	//Jump();
+	
 	GetCharacterMovement()->MaxWalkSpeed = BoostSpeed;
-	//GetCharacterMovement()->MaxAcceleration = BoostSpeed;
 }
 
 void APCH_Base::Action_Implementation(const FInputActionInstance& Instance)
@@ -115,7 +115,18 @@ void APCH_Base::Action_Implementation(const FInputActionInstance& Instance)
 	IIA_Interface::Action_Implementation(Instance);
 	bool bValue = Instance.GetValue().Get<bool>();
 
+	if (OverlappingActor)
+	{
+		IInteractionInterface::Execute_Interact(OverlappingActor);
+	}
+
 	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, "Fire");
+}
+
+void APCH_Base::SetOverlappedActor_Implementation(AActor* OverlappedActor)
+{
+	IPCH_Interface::SetOverlappedActor_Implementation(OverlappedActor);
+	OverlappingActor = OverlappedActor;
 }
 
 void APCH_Base::PlayerDeath()
