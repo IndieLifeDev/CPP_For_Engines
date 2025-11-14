@@ -105,9 +105,9 @@ void APCH_Base::LookAction_Implementation(const FInputActionInstance& Instance)
 void APCH_Base::BoostAction_Implementation(const FInputActionInstance& Instance)
 {
 	IIA_Interface::BoostAction_Implementation(Instance);
-	//Jump();
+	
 	GetCharacterMovement()->MaxWalkSpeed = BoostSpeed;
-	//GetCharacterMovement()->MaxAcceleration = BoostSpeed;
+	
 }
 
 void APCH_Base::Action_Implementation(const FInputActionInstance& Instance)
