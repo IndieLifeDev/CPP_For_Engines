@@ -17,6 +17,9 @@ APCH_Base::APCH_Base()
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	ShipMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ShipMesh"));
+	ShipMesh->SetupAttachment(RootComponent);
+
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>("Spring Arm");
 	SpringArm->SetupAttachment(RootComponent);
 
@@ -25,8 +28,8 @@ APCH_Base::APCH_Base()
 
 	Health = CreateDefaultSubobject<UHealthComponent>("Health");
 
-	bUseControllerRotationPitch = true;
-	bUseControllerRotationYaw = true;
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 	SpringArm->bUsePawnControlRotation = true;
 	
@@ -54,6 +57,19 @@ void APCH_Base::BeginPlay()
 void APCH_Base::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (Controller)
+	{
+		/*FVector Velocity = GetVelocity();
+		float RightSpeed = FVector::DotProduct(GetActorRightVector(), Velocity);*/
+
+		float TargetRoll = FMath::Clamp(CurrentSteerInput * 30.0f, -30.0f, 30.0f);
+
+		FRotator CurrentRotation = ShipMesh->GetRelativeRotation();
+		FRotator TargetRotation = FRotator(TargetRoll, CurrentRotation.Yaw, CurrentRotation.Roll);
+
+		ShipMesh->SetRelativeRotation(FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, 5.0f));
+	}
 }
 
 // Called to bind functionality to input
@@ -67,9 +83,30 @@ void APCH_Base::MoveAction_Implementation(const FInputActionInstance& Instance)
 {
 	IIA_Interface::MoveAction_Implementation(Instance);
 
-	if (Controller)
+	const FVector2D MoveValue = Instance.GetValue().Get<FVector2D>();
+		
+	if (FMath::Abs(MoveValue.Y) > KINDA_SMALL_NUMBER)
 	{
-		const FVector2D MoveValue = Instance.GetValue().Get<FVector2D>();
+		AddMovementInput(FVector::ForwardVector, MoveValue.Y);
+	}
+	if (FMath::Abs(MoveValue.X) > KINDA_SMALL_NUMBER)
+	{
+		AddMovementInput(FVector::RightVector, MoveValue.X);
+	}
+
+	CurrentSteerInput = MoveValue.X;
+	
+	/*if (Controller)
+	{*/
+		
+		
+		/*const FVector2D AxisValue = Instance.GetValue().Get<FVector2D>();
+		if (AxisValue.X != 0.0f)
+		{
+			AddControllerYawInput(AxisValue.X);
+		}*/
+		
+		/*const FVector2D MoveValue = Instance.GetValue().Get<FVector2D>();
 		const FRotator MovementRotation(0, Controller->GetControlRotation().Yaw, 0);
 
 		if (FMath::Abs(MoveValue.Y) > KINDA_SMALL_NUMBER)
@@ -81,8 +118,8 @@ void APCH_Base::MoveAction_Implementation(const FInputActionInstance& Instance)
 		{
 			const FVector Direction = MovementRotation.RotateVector(FVector::RightVector);
 			AddMovementInput(Direction, MoveValue.X);
-		}
-	}
+		}*/
+	
 }
 
 void APCH_Base::LookAction_Implementation(const FInputActionInstance& Instance)
@@ -110,7 +147,7 @@ void APCH_Base::BoostAction_Implementation(const FInputActionInstance& Instance)
 	GetCharacterMovement()->MaxWalkSpeed = BoostSpeed;
 }
 
-void APCH_Base::BoostStopActionImplementation(const FInputActionInstance& Instance)
+void APCH_Base::BoostStopAction_Implementation(const FInputActionInstance& Instance)
 {
 	IIA_Interface::BoostAction_Implementation(Instance);
 
@@ -145,4 +182,3 @@ void APCH_Base::PlayerDeath()
 	PC->SetIgnoreMoveInput(true);
 	PC->SetIgnoreLookInput(true);
 }
-

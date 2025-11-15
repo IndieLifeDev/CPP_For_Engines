@@ -25,6 +25,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Mesh")
+	UStaticMeshComponent* ShipMesh;
+	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USpringArmComponent> SpringArm;
 
@@ -35,8 +38,10 @@ protected:
 	TObjectPtr<UHealthComponent> Health;
 
 	UPROPERTY(BlueprintReadWrite, Category = "Speeds")
-	float DefaultSpeed = 400.0f;
-	float BoostSpeed = 800.0f;
+	float DefaultSpeed = 1000.0f;
+	float BoostSpeed = 2500.0f;
+
+	float CurrentSteerInput = 0.0f;
 	//float BoostAcceleration = 800.0f;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Interactions")
@@ -52,7 +57,7 @@ public:
 	virtual void MoveAction_Implementation(const FInputActionInstance& Instance) override;
 	virtual void LookAction_Implementation(const FInputActionInstance& Instance) override;
 	virtual void BoostAction_Implementation(const FInputActionInstance& Instance) override;
-	virtual void BoostStopActionImplementation(const FInputActionInstance& Instance);
+	virtual void BoostStopAction_Implementation(const FInputActionInstance& Instance) override;
 	virtual void Action_Implementation(const FInputActionInstance& Instance) override;
 
 	virtual void SetOverlappedActor_Implementation(AActor* OverlappedActor) override;

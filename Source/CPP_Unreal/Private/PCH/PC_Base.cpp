@@ -37,7 +37,6 @@ void APC_Base::SetupInputComponent()
 		/*PEI->BindAction(InputActions->Boost.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::Boost);*/
 
 		PEI->BindAction(InputActions->Boost.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::Boost);
-
 		PEI->BindAction(InputActions->Boost.LoadSynchronous(), ETriggerEvent::Completed, this, &APC_Base::BoostStopped);
 		
 	}
@@ -66,6 +65,6 @@ void APC_Base::Boost(const FInputActionInstance& Instance)
 
 void APC_Base::BoostStopped(const FInputActionInstance& Instance)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Boost COMPLETED"));
+	UE_LOG(LogTemp, Warning, TEXT("Boost RELEASED"));
 	IIA_Interface::Execute_BoostStopAction(LocalPCH, Instance);
 }
