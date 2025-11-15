@@ -110,6 +110,13 @@ void APCH_Base::BoostAction_Implementation(const FInputActionInstance& Instance)
 	GetCharacterMovement()->MaxWalkSpeed = BoostSpeed;
 }
 
+void APCH_Base::BoostStopActionImplementation(const FInputActionInstance& Instance)
+{
+	IIA_Interface::BoostAction_Implementation(Instance);
+
+	GetCharacterMovement()->MaxWalkSpeed = DefaultSpeed;
+}
+
 void APCH_Base::Action_Implementation(const FInputActionInstance& Instance)
 {
 	IIA_Interface::Action_Implementation(Instance);
@@ -123,11 +130,13 @@ void APCH_Base::Action_Implementation(const FInputActionInstance& Instance)
 	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, "Fire");
 }
 
+
 void APCH_Base::SetOverlappedActor_Implementation(AActor* OverlappedActor)
 {
 	IPCH_Interface::SetOverlappedActor_Implementation(OverlappedActor);
 	OverlappingActor = OverlappedActor;
 }
+
 
 void APCH_Base::PlayerDeath()
 {

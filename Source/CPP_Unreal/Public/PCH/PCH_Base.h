@@ -57,6 +57,9 @@ public:
 	virtual void SetOverlappedActor_Implementation(AActor* OverlappedActor) override;
 
 	UFUNCTION()
+	void BoostStopActionImplementation(const FInputActionInstance& Instance);
+
+	UFUNCTION()
 	void PlayerDeath();
 	
 };
