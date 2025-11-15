@@ -52,12 +52,10 @@ public:
 	virtual void MoveAction_Implementation(const FInputActionInstance& Instance) override;
 	virtual void LookAction_Implementation(const FInputActionInstance& Instance) override;
 	virtual void BoostAction_Implementation(const FInputActionInstance& Instance) override;
+	virtual void BoostStopActionImplementation(const FInputActionInstance& Instance);
 	virtual void Action_Implementation(const FInputActionInstance& Instance) override;
 
 	virtual void SetOverlappedActor_Implementation(AActor* OverlappedActor) override;
-
-	UFUNCTION()
-	void BoostStopActionImplementation(const FInputActionInstance& Instance);
 
 	UFUNCTION()
 	void PlayerDeath();

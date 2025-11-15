@@ -60,10 +60,12 @@ void APC_Base::Action(const FInputActionInstance& Instance)
 
 void APC_Base::Boost(const FInputActionInstance& Instance)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Boost TRIGGERED"));
 	IIA_Interface::Execute_BoostAction(LocalPCH, Instance);
 }
 
 void APC_Base::BoostStopped(const FInputActionInstance& Instance)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Boost COMPLETED"));
 	IIA_Interface::Execute_BoostStopAction(LocalPCH, Instance);
 }

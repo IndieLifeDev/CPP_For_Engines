@@ -34,7 +34,5 @@ public:
 	void Look(const FInputActionInstance& Instance);
 	void Action(const FInputActionInstance& Instance);
 	void Boost(const FInputActionInstance& Instance);
-
-	UFUNCTION()
 	void BoostStopped(const FInputActionInstance& Instance);
 };
