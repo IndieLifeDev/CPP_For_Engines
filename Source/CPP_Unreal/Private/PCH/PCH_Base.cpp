@@ -7,6 +7,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "CPP_Unreal/PCH/HealthComponent.h"
+#include "NiagaraComponent.h"
 #include "Interactables/InteractionInterface.h"
 #include "PCH/PC_Base.h"
 
@@ -27,6 +28,10 @@ APCH_Base::APCH_Base()
 	Camera->SetupAttachment(SpringArm);
 
 	Health = CreateDefaultSubobject<UHealthComponent>("Health");
+
+	BoostFX = CreateDefaultSubobject<UNiagaraComponent>("BoostFX");
+	BoostFX->SetupAttachment(RootComponent);
+	BoostFX->bAutoActivate = false;
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -60,9 +65,6 @@ void APCH_Base::Tick(float DeltaTime)
 
 	if (Controller)
 	{
-		/*FVector Velocity = GetVelocity();
-		float RightSpeed = FVector::DotProduct(GetActorRightVector(), Velocity);*/
-
 		float TargetRoll = FMath::Clamp(CurrentSteerInput * 30.0f, -30.0f, 30.0f);
 
 		FRotator CurrentRotation = ShipMesh->GetRelativeRotation();
@@ -76,7 +78,6 @@ void APCH_Base::Tick(float DeltaTime)
 void APCH_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	
 }
 
 void APCH_Base::MoveAction_Implementation(const FInputActionInstance& Instance)
@@ -95,31 +96,6 @@ void APCH_Base::MoveAction_Implementation(const FInputActionInstance& Instance)
 	}
 
 	CurrentSteerInput = MoveValue.X;
-	
-	/*if (Controller)
-	{*/
-		
-		
-		/*const FVector2D AxisValue = Instance.GetValue().Get<FVector2D>();
-		if (AxisValue.X != 0.0f)
-		{
-			AddControllerYawInput(AxisValue.X);
-		}*/
-		
-		/*const FVector2D MoveValue = Instance.GetValue().Get<FVector2D>();
-		const FRotator MovementRotation(0, Controller->GetControlRotation().Yaw, 0);
-
-		if (FMath::Abs(MoveValue.Y) > KINDA_SMALL_NUMBER)
-		{
-			const FVector Direction = MovementRotation.RotateVector(FVector::ForwardVector);
-			AddMovementInput(Direction, MoveValue.Y);
-		}
-		if (FMath::Abs(MoveValue.X) > KINDA_SMALL_NUMBER)
-		{
-			const FVector Direction = MovementRotation.RotateVector(FVector::RightVector);
-			AddMovementInput(Direction, MoveValue.X);
-		}*/
-	
 }
 
 void APCH_Base::LookAction_Implementation(const FInputActionInstance& Instance)
@@ -129,10 +105,7 @@ void APCH_Base::LookAction_Implementation(const FInputActionInstance& Instance)
 	if (Controller)
 	{
 		const FVector2D AxisValue = Instance.GetValue().Get<FVector2D>();
-		/*if (AxisValue.Y != 0.0f)
-		{
-			AddControllerPitchInput(-AxisValue.Y); // Inverts Y Input
-		}*/
+		
 		if (AxisValue.X != 0.0f)
 		{
 			AddControllerYawInput(AxisValue.X);
@@ -145,6 +118,12 @@ void APCH_Base::BoostAction_Implementation(const FInputActionInstance& Instance)
 	IIA_Interface::BoostAction_Implementation(Instance);
 	
 	GetCharacterMovement()->MaxWalkSpeed = BoostSpeed;
+	if (BoostFX && BoostFXSystem)
+	{
+		Camera->FieldOfView = BoostFOV;
+		BoostFX->SetAsset(BoostFXSystem);
+		BoostFX->Activate();
+	}
 }
 
 void APCH_Base::BoostStopAction_Implementation(const FInputActionInstance& Instance)
@@ -152,6 +131,12 @@ void APCH_Base::BoostStopAction_Implementation(const FInputActionInstance& Insta
 	IIA_Interface::BoostAction_Implementation(Instance);
 
 	GetCharacterMovement()->MaxWalkSpeed = DefaultSpeed;
+
+	if (BoostFX)
+	{
+		Camera->FieldOfView = DefaultFOV;
+		BoostFX->Deactivate();
+	}
 }
 
 void APCH_Base::Action_Implementation(const FInputActionInstance& Instance)

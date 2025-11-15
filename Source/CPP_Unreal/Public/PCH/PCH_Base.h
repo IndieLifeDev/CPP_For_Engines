@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
 #include "PCH_Interface.h"
 #include "GameFramework/Character.h"
 #include "CPP_Unreal/PCH/IA_Interface.h"
@@ -11,6 +13,7 @@
 class UHealthComponent;
 class USpringArmComponent;
 class UCameraComponent;
+class UNiagaraComponent;
 
 UCLASS()
 class CPP_UNREAL_API APCH_Base : public ACharacter, public IIA_Interface, public IPCH_Interface
@@ -36,10 +39,18 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UHealthComponent> Health;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effects")
+	UNiagaraComponent* BoostFX;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effects")
+	UNiagaraSystem* BoostFXSystem;
+	
 	UPROPERTY(BlueprintReadWrite, Category = "Speeds")
 	float DefaultSpeed = 1000.0f;
 	float BoostSpeed = 2500.0f;
+	int DefaultFOV = 110;
+	int BoostFOV = 130;
 
 	float CurrentSteerInput = 0.0f;
 	//float BoostAcceleration = 800.0f;
