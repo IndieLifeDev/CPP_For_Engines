@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PCH_Interface.h"
 #include "GameFramework/Character.h"
 #include "CPP_Unreal/PCH/IA_Interface.h"
 #include "PCH_Base.generated.h"
@@ -12,7 +13,7 @@ class USpringArmComponent;
 class UCameraComponent;
 
 UCLASS()
-class CPP_UNREAL_API APCH_Base : public ACharacter, public IIA_Interface
+class CPP_UNREAL_API APCH_Base : public ACharacter, public IIA_Interface, public IPCH_Interface
 {
 	GENERATED_BODY()
 
@@ -52,6 +53,8 @@ public:
 	virtual void LookAction_Implementation(const FInputActionInstance& Instance) override;
 	virtual void BoostAction_Implementation(const FInputActionInstance& Instance) override;
 	virtual void Action_Implementation(const FInputActionInstance& Instance) override;
+
+	virtual void SetOverlappedActor_Implementation(AActor* OverlappedActor) override;
 
 	UFUNCTION()
 	void PlayerDeath();
