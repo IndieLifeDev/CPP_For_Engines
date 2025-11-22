@@ -31,20 +31,27 @@ void APC_Base::SetupInputComponent()
 
 	if (UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(InputComponent))
 	{
-		PEI->BindAction(InputActions->Move.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::Move);
+		PEI->BindAction(InputActions->Steer.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::Steer);
 		PEI->BindAction(InputActions->Look.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::Look);
 		PEI->BindAction(InputActions->Action.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::Action);
 		/*PEI->BindAction(InputActions->Boost.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::Boost);*/
 
+		// Accelerate / Decelerate Actions
+		PEI->BindAction(InputActions->Accelerate.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::Accelerate);
+		PEI->BindAction(InputActions->Accelerate.LoadSynchronous(), ETriggerEvent::Completed, this, &APC_Base::AccelerateStopped);
+		PEI->BindAction(InputActions->Decelerate.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::Decelerate);
+		PEI->BindAction(InputActions->Decelerate.LoadSynchronous(), ETriggerEvent::Completed, this, &APC_Base::DecelerateStopped);
+
+		// Boost Action
 		PEI->BindAction(InputActions->Boost.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::Boost);
 		PEI->BindAction(InputActions->Boost.LoadSynchronous(), ETriggerEvent::Completed, this, &APC_Base::BoostStopped);
 		
 	}
 }
 
-void APC_Base::Move(const FInputActionInstance& Instance)
+void APC_Base::Steer(const FInputActionInstance& Instance)
 {
-	IIA_Interface::Execute_MoveAction(LocalPCH, Instance);
+	IIA_Interface::Execute_SteerAction(LocalPCH, Instance);
 }
 
 void APC_Base::Look(const FInputActionInstance& Instance)
@@ -54,7 +61,31 @@ void APC_Base::Look(const FInputActionInstance& Instance)
 
 void APC_Base::Action(const FInputActionInstance& Instance)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Player did an Action"));
 	IIA_Interface::Execute_Action(LocalPCH, Instance);
+}
+
+void APC_Base::Accelerate(const FInputActionInstance& Instance)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Player ACCELERATING"));
+	IIA_Interface::Execute_AccelerateAction(LocalPCH, Instance);
+}
+
+void APC_Base::AccelerateStopped(const FInputActionInstance& Instance)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Player ACCELERATING STOPPED"));
+	IIA_Interface::Execute_AccelerateStopAction(LocalPCH, Instance);
+}
+
+void APC_Base::Decelerate(const FInputActionInstance& Instance)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Player DECELERATING"));
+	IIA_Interface::Execute_DecelerateAction(LocalPCH, Instance);
+}
+void APC_Base::DecelerateStopped(const FInputActionInstance& Instance)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Player DECELERATING STOPPED"));
+	IIA_Interface::Execute_DecelerateStopAction(LocalPCH, Instance);
 }
 
 void APC_Base::Boost(const FInputActionInstance& Instance)

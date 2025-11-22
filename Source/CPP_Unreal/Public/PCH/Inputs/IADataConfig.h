@@ -24,8 +24,14 @@ public:
 	TSoftObjectPtr<UInputAction> Boost;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	TSoftObjectPtr<UInputAction> Move;
+	TSoftObjectPtr<UInputAction> Steer;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSoftObjectPtr<UInputAction> Accelerate;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSoftObjectPtr<UInputAction> Decelerate;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftObjectPtr<UInputAction> Look;
 };

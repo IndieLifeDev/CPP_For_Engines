@@ -45,15 +45,41 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effects")
 	UNiagaraSystem* BoostFXSystem;
-	
-	UPROPERTY(BlueprintReadWrite, Category = "Speeds")
-	float DefaultSpeed = 1000.0f;
-	float BoostSpeed = 2500.0f;
+
+	// Current Ship Speed
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float CurrentSpeed = 1000.0f;
+
+	// Minimum and Maximum Speeds
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float MinSpeed = 800.0f;
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float MaxSpeed = 1500.0f;
+
+	// Acceleration and Deceleration Rates
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float AccelerationRate = 500.0f;
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float DecelerationRate = 400.0f;
+
+	// Boost
+	UPROPERTY(EditAnywhere, Category = "Movement")
+	float BoostMultiplier = 1.5f;
+	bool bBoosting = false;
+
+	// Inputs
+	bool bAccelerating = false;
+	bool bDecelerating = false;
+
+	// FOV
 	int DefaultFOV = 110;
 	int BoostFOV = 130;
 
+	// Steering
 	float CurrentSteerInput = 0.0f;
-	//float BoostAcceleration = 800.0f;
+	float LastSteerInputTime = 0.0f;
+	UPROPERTY(EditAnywhere, Category = "Steering")
+	float SteerInputTimeout = 0.08f;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Interactions")
 	TObjectPtr<AActor> OverlappingActor;
@@ -65,10 +91,18 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual void MoveAction_Implementation(const FInputActionInstance& Instance) override;
+	virtual void SteerAction_Implementation(const FInputActionInstance& Instance) override;
 	virtual void LookAction_Implementation(const FInputActionInstance& Instance) override;
+
+	virtual void AccelerateAction_Implementation(const FInputActionInstance& Instance) override;
+	virtual void AccelerateStopAction_Implementation(const FInputActionInstance& Instance) override;
+
+	virtual void DecelerateAction_Implementation(const FInputActionInstance& Instance) override;
+	virtual void DecelerateStopAction_Implementation(const FInputActionInstance& Instance) override;
+	
 	virtual void BoostAction_Implementation(const FInputActionInstance& Instance) override;
 	virtual void BoostStopAction_Implementation(const FInputActionInstance& Instance) override;
+
 	virtual void Action_Implementation(const FInputActionInstance& Instance) override;
 
 	virtual void SetOverlappedActor_Implementation(AActor* OverlappedActor) override;

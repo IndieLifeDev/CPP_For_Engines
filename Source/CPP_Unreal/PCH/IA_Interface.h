@@ -34,7 +34,19 @@ public:
 	void BoostStopAction(const FInputActionInstance& Instance);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void MoveAction(const FInputActionInstance& Instance);
+	void SteerAction(const FInputActionInstance& Instance);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void AccelerateAction(const FInputActionInstance& Instance);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void AccelerateStopAction(const FInputActionInstance& Instance);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void DecelerateAction(const FInputActionInstance& Instance);
+
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	void DecelerateStopAction(const FInputActionInstance& Instance);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void LookAction(const FInputActionInstance& Instance);
