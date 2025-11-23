@@ -30,13 +30,22 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UIADataConfig> InputActions;
 
+	// Character Base Actions
 	void Steer(const FInputActionInstance& Instance);
 	void Look(const FInputActionInstance& Instance);
 	void Action(const FInputActionInstance& Instance);
+
+	// Accelerate / Decelerate Actions
 	void Accelerate(const FInputActionInstance& Instance);
 	void AccelerateStopped(const FInputActionInstance& Instance);
 	void Decelerate(const FInputActionInstance& Instance);
 	void DecelerateStopped(const FInputActionInstance& Instance);
+
+	// Boost Actions
 	void Boost(const FInputActionInstance& Instance);
 	void BoostStopped(const FInputActionInstance& Instance);
+
+	// Fire Actions
+	void FirePressed(const FInputActionInstance& Instance);
+	void FireReleased(const FInputActionInstance& Instance);
 };

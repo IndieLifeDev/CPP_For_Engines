@@ -8,6 +8,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "CPP_Unreal/PCH/HealthComponent.h"
 #include "NiagaraComponent.h"
+#include "CPP_Unreal/Enemies/ProjectileBase.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Interactables/InteractionInterface.h"
 #include "PCH/PC_Base.h"
 
@@ -29,6 +31,14 @@ APCH_Base::APCH_Base()
 
 	Health = CreateDefaultSubobject<UHealthComponent>("Health");
 
+	MuzzlePoint = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzlePoint"));
+	MuzzlePoint->SetupAttachment(ShipMesh);
+	MuzzlePoint->SetRelativeLocation(FVector(200, 0, 0));
+	
+	AirFX = CreateDefaultSubobject<UNiagaraComponent>("AirFX");
+	AirFX->SetupAttachment(RootComponent);
+	AirFX->bAutoActivate = false;
+	
 	BoostFX = CreateDefaultSubobject<UNiagaraComponent>("BoostFX");
 	BoostFX->SetupAttachment(RootComponent);
 	BoostFX->bAutoActivate = false;
@@ -46,6 +56,12 @@ void APCH_Base::BeginPlay()
 	Super::BeginPlay();
 
 	GetCharacterMovement()->MaxWalkSpeed = MaxSpeed;
+
+	if (AirFX && AirFXSystem)
+	{
+		AirFX->SetAsset(AirFXSystem);
+		AirFX->Activate();
+	}
 
 	if (Health)
 	{
@@ -110,6 +126,7 @@ void APCH_Base::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+// Steer Action Implementation
 void APCH_Base::SteerAction_Implementation(const FInputActionInstance& Instance)
 {
 	IIA_Interface::SteerAction_Implementation(Instance);
@@ -125,6 +142,7 @@ void APCH_Base::SteerAction_Implementation(const FInputActionInstance& Instance)
 	}
 }
 
+// Accelerate Action Implementation
 void APCH_Base::AccelerateAction_Implementation(const FInputActionInstance& Instance)
 {
 	IIA_Interface::AccelerateAction_Implementation(Instance);
@@ -132,6 +150,7 @@ void APCH_Base::AccelerateAction_Implementation(const FInputActionInstance& Inst
 	bAccelerating = true;
 }
 
+// Accelerate Stop Action Implementation
 void APCH_Base::AccelerateStopAction_Implementation(const FInputActionInstance& Instance)
 {
 	IIA_Interface::AccelerateStopAction_Implementation(Instance);
@@ -140,6 +159,7 @@ void APCH_Base::AccelerateStopAction_Implementation(const FInputActionInstance& 
 	UE_LOG(LogTemp, Warning, TEXT("ACCELERATE STOPPED FIRED"))
 }
 
+// Decelerate Action Implementation
 void APCH_Base::DecelerateAction_Implementation(const FInputActionInstance& Instance)
 {
 	IIA_Interface::DecelerateAction_Implementation(Instance);
@@ -147,6 +167,7 @@ void APCH_Base::DecelerateAction_Implementation(const FInputActionInstance& Inst
 	bDecelerating = true;
 }
 
+// Decelerate Stop Action Implementation
 void APCH_Base::DecelerateStopAction_Implementation(const FInputActionInstance& Instance)
 {
 	IIA_Interface::DecelerateStopAction_Implementation(Instance);
@@ -155,6 +176,7 @@ void APCH_Base::DecelerateStopAction_Implementation(const FInputActionInstance& 
 	UE_LOG(LogTemp, Warning, TEXT("DECELERATE STOPPED FIRED"))
 }
 
+// Look Action Implementation
 void APCH_Base::LookAction_Implementation(const FInputActionInstance& Instance)
 {
 	IIA_Interface::LookAction_Implementation(Instance);
@@ -170,6 +192,7 @@ void APCH_Base::LookAction_Implementation(const FInputActionInstance& Instance)
 	}
 }
 
+// Boost Action Implementation
 void APCH_Base::BoostAction_Implementation(const FInputActionInstance& Instance)
 {
 	IIA_Interface::BoostAction_Implementation(Instance);
@@ -184,6 +207,7 @@ void APCH_Base::BoostAction_Implementation(const FInputActionInstance& Instance)
 	Camera->FieldOfView = BoostFOV;
 }
 
+// Boost Stop Action Implementation
 void APCH_Base::BoostStopAction_Implementation(const FInputActionInstance& Instance)
 {
 	IIA_Interface::BoostAction_Implementation(Instance);
@@ -197,10 +221,11 @@ void APCH_Base::BoostStopAction_Implementation(const FInputActionInstance& Insta
 	Camera->FieldOfView = DefaultFOV;
 }
 
+// Action Implementation
 void APCH_Base::Action_Implementation(const FInputActionInstance& Instance)
 {
 	IIA_Interface::Action_Implementation(Instance);
-	bool bValue = Instance.GetValue().Get<bool>();
+	//bool bValue = Instance.GetValue().Get<bool>();
 
 	if (OverlappingActor)
 	{
@@ -210,12 +235,62 @@ void APCH_Base::Action_Implementation(const FInputActionInstance& Instance)
 	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, "Fire");
 }
 
+// Start Firing Implementation
+void APCH_Base::StartFiring_Implementation()
+{
+	if (!bIsFiring)
+	{
+		bIsFiring = true;
+		FireProjectile();
+		GetWorld()->GetTimerManager().SetTimer(FireTimer, this, &APCH_Base::FireProjectile, FireRate, true);
+	}
+}
+
+// Stop Firing Implementation
+void APCH_Base::StopFiring_Implementation()
+{
+	bIsFiring = false;
+	GetWorld()->GetTimerManager().ClearTimer(FireTimer);
+}
+
+// Set Overlapped Actor Action Implementation
 void APCH_Base::SetOverlappedActor_Implementation(AActor* OverlappedActor)
 {
 	IPCH_Interface::SetOverlappedActor_Implementation(OverlappedActor);
 	OverlappingActor = OverlappedActor;
 }
 
+// Fire Projectile
+void APCH_Base::FireProjectile()
+{
+	if (!ProjectileClass || !MuzzlePoint)
+	{
+		return;
+	}
+
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.Owner = this;
+
+	const FVector SpawnLocation = MuzzlePoint->GetComponentLocation();
+	const FRotator SpawnRotation = MuzzlePoint->GetComponentRotation();
+
+	AProjectileBase* Projectile = GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass,
+		SpawnLocation, SpawnRotation, SpawnParameters);
+
+	if (Projectile)
+	{
+		float ShipSpeed = GetVelocity().Size();
+		float FinalSpeed = BaseProjectileSpeed + ShipSpeed;
+
+		Projectile->ProjectileMovementComponent->InitialSpeed = FinalSpeed;
+
+		Projectile->ProjectileMovementComponent->MaxSpeed = FinalSpeed;
+
+		Projectile->ProjectileMovementComponent->Velocity = SpawnRotation.Vector() * FinalSpeed;
+	}
+}
+
+// Player Death
 void APCH_Base::PlayerDeath()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 0.2f, FColor::Red, "Player Died! Disabling Input!");

@@ -31,10 +31,11 @@ void APC_Base::SetupInputComponent()
 
 	if (UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(InputComponent))
 	{
+		// Character Base Actions
 		PEI->BindAction(InputActions->Steer.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::Steer);
 		PEI->BindAction(InputActions->Look.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::Look);
-		PEI->BindAction(InputActions->Action.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::Action);
-		/*PEI->BindAction(InputActions->Boost.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::Boost);*/
+		PEI->BindAction(InputActions->Action.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::FirePressed);
+		PEI->BindAction(InputActions->Action.LoadSynchronous(), ETriggerEvent::Completed, this, &APC_Base::FireReleased);
 
 		// Accelerate / Decelerate Actions
 		PEI->BindAction(InputActions->Accelerate.LoadSynchronous(), ETriggerEvent::Triggered, this, &APC_Base::Accelerate);
@@ -98,4 +99,14 @@ void APC_Base::BoostStopped(const FInputActionInstance& Instance)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Boost RELEASED"));
 	IIA_Interface::Execute_BoostStopAction(LocalPCH, Instance);
+}
+
+void APC_Base::FirePressed(const FInputActionInstance& Instance)
+{
+	IIA_Interface::Execute_StartFiring(LocalPCH);
+}
+
+void APC_Base::FireReleased(const FInputActionInstance& Instance)
+{
+	IIA_Interface::Execute_StopFiring(LocalPCH);
 }

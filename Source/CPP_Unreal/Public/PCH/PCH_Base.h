@@ -6,6 +6,7 @@
 #include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "PCH_Interface.h"
+#include "CPP_Unreal/Enemies/ProjectileBase.h"
 #include "GameFramework/Character.h"
 #include "CPP_Unreal/PCH/IA_Interface.h"
 #include "PCH_Base.generated.h"
@@ -39,12 +40,19 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UHealthComponent> Health;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effects")
-	UNiagaraComponent* BoostFX;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effects")
+	UNiagaraComponent* AirFX;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effects")
+	UNiagaraSystem* AirFXSystem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effects")
+	UNiagaraComponent* BoostFX;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effects")
 	UNiagaraSystem* BoostFXSystem;
+
 
 	// Current Ship Speed
 	UPROPERTY(EditAnywhere, Category = "Movement")
@@ -84,6 +92,21 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Interactions")
 	TObjectPtr<AActor> OverlappingActor;
 
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TSubclassOf<AProjectileBase> ProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	float FireRate = 0.1f;
+
+	FTimerHandle FireTimer;
+
+	bool bIsFiring = false;
+
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	USceneComponent* MuzzlePoint;
+
+	float BaseProjectileSpeed = 4000.0f;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -107,6 +130,15 @@ public:
 
 	virtual void SetOverlappedActor_Implementation(AActor* OverlappedActor) override;
 
+	UFUNCTION(BlueprintNativeEvent)
+	void StartFiring();
+	
+	UFUNCTION(BlueprintNativeEvent)
+	void StopFiring();
+
+	UFUNCTION()
+	void FireProjectile();
+	
 	UFUNCTION()
 	void PlayerDeath();
 	
