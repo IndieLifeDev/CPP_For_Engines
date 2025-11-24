@@ -14,15 +14,13 @@ AObstacleBase::AObstacleBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
-	SetRootComponent(BoxCollision);
-
+	BoxCollision->SetCollisionObjectType(ECC_WorldStatic);
+	BoxCollision->SetCollisionResponseToAllChannels(ECR_Overlap);
+	BoxCollision->SetGenerateOverlapEvents(true);
 	
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 	MeshComponent->SetupAttachment(BoxCollision);
-	MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	MeshComponent->SetCollisionObjectType(ECC_WorldDynamic);
-	MeshComponent->SetCollisionResponseToAllChannels(ECR_Block);
-	MeshComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+	MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	Health = CreateDefaultSubobject<UHealthComponent>("Health");
 }
@@ -32,9 +30,16 @@ void AObstacleBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (BoxCollision)
+	{
+		BoxCollision->OnComponentBeginOverlap.AddDynamic(this, &AObstacleBase::OnObstacleOverlap);
+	}
+	
 	if (Health)
 	{
+		/*
 		BoxCollision->OnComponentHit.AddDynamic(this, &AObstacleBase::OnHit);
+		*/
 		Health->OnDeath.AddDynamic(this, &AObstacleBase::HandleDeath);
 	}
 }
@@ -47,7 +52,23 @@ void AObstacleBase::Tick(float DeltaTime)
 	AddActorWorldRotation(FRotator(0, 100.0f * DeltaTime, 0));
 }
 
-void AObstacleBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor,
+void AObstacleBase::OnObstacleOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (!OtherActor || OtherActor == this)
+	{
+		return;
+	}
+
+	if (AProjectileBase* Projectile = Cast<AProjectileBase>(OtherActor))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Obstacle hit by projectile: %s"), *OtherActor->GetName());
+		UGameplayStatics::ApplyDamage(this, Projectile->BaseDamage, Projectile->GetInstigatorController(), Projectile, nullptr);
+		Projectile->Destroy();
+	}
+}
+
+
+/*void AObstacleBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, FVector NormalImpulse,
 	const FHitResult& Hit)
 {
@@ -76,12 +97,12 @@ void AObstacleBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor,
 	{
 		UE_LOG(LogTemp, Warning, TEXT("OnHit called, but OtherActor is NOT projectile."))
 	}
-}
+}*/
 
-void AObstacleBase::HandleDamageTaken(float DamageAmount)
+/*void AObstacleBase::HandleDamageTaken(float DamageAmount)
 {
 	// FX
-}
+}*/
 
 void AObstacleBase::HandleDeath()
 {
