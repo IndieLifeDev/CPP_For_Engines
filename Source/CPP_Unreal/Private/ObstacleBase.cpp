@@ -67,43 +67,6 @@ void AObstacleBase::OnObstacleOverlap(UPrimitiveComponent* OverlappedComponent, 
 	}
 }
 
-
-/*void AObstacleBase::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, FVector NormalImpulse,
-	const FHitResult& Hit)
-{
-	if (!OtherActor || OtherActor == this)
-	{
-		return;
-	}
-
-	UE_LOG(LogTemp, Warning, TEXT("OnHit Fired! OtherActor: %s"), *GetNameSafe(OtherActor));
-
-	if (AProjectileBase* Projectile = Cast<AProjectileBase>(OtherActor))
-	{
-		// Uses projectiles base damage from its class
-		float DamageAmount = Projectile->BaseDamage;
-		
-		UE_LOG(LogTemp, Warning, TEXT("Hit by projectile! Damage = %f"), DamageAmount);
-
-		// Applies damage to the object as the Health Component receives it with OnTakeAnyDamage
-		UGameplayStatics::ApplyDamage(this, DamageAmount,
-			Projectile->GetInstigatorController(), Projectile, nullptr);
-		
-		// Destroys Projectile
-		Projectile->Destroy();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("OnHit called, but OtherActor is NOT projectile."))
-	}
-}*/
-
-/*void AObstacleBase::HandleDamageTaken(float DamageAmount)
-{
-	// FX
-}*/
-
 void AObstacleBase::HandleDeath()
 {
 	if (DestroyFX)
