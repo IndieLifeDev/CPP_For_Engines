@@ -3,9 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/BoxComponent.h"
 #include "CPP_Unreal/PCH/HealthComponent.h"
 #include "GameFramework/Actor.h"
 #include "ObstacleBase.generated.h"
+
+class UNiagaraSystem;
 
 UCLASS()
 class CPP_UNREAL_API AObstacleBase : public AActor
@@ -24,6 +27,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UBoxComponent> BoxCollision;
+	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UStaticMeshComponent> MeshComponent;
 

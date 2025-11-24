@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "NiagaraSystem.h"
 #include "NiagaraFunctionLibrary.h"
 #include "PCH_Interface.h"
 #include "CPP_Unreal/Enemies/ProjectileBase.h"

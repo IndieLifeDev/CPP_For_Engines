@@ -63,7 +63,7 @@ void AProjectileBase::ProjectileHit(UPrimitiveComponent* HitComponent, AActor* O
 	}
 	
 	// VFX??
-	
+	UE_LOG(LogTemp, Warning, TEXT("Projectile hit: %s"), *OtherActor->GetName());
 	Destroy();
 }
 

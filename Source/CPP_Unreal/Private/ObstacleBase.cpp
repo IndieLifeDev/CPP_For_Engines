@@ -7,15 +7,18 @@
 #include "CPP_Unreal/Enemies/ProjectileBase.h"
 #include "Kismet/GameplayStatics.h"
 
-
 // Sets default values
 AObstacleBase::AObstacleBase()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
+	SetRootComponent(BoxCollision);
+
+	
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
-	SetRootComponent(MeshComponent);
+	MeshComponent->SetupAttachment(BoxCollision);
 	MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	MeshComponent->SetCollisionObjectType(ECC_WorldDynamic);
 	MeshComponent->SetCollisionResponseToAllChannels(ECR_Block);
@@ -31,7 +34,7 @@ void AObstacleBase::BeginPlay()
 
 	if (Health)
 	{
-		MeshComponent->OnComponentHit.AddDynamic(this, &AObstacleBase::OnHit);
+		BoxCollision->OnComponentHit.AddDynamic(this, &AObstacleBase::OnHit);
 		Health->OnDeath.AddDynamic(this, &AObstacleBase::HandleDeath);
 	}
 }
