@@ -31,10 +31,10 @@ public:
 	void OnDamaged(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
 		AController* InstigatedBy, AActor* DamageCauser);
 
-	UPROPERTY(EditDefaultsOnly, Category = Health)
+	UPROPERTY(EditAnywhere, Category = Health)
 	float MaxHealth = 100.0f;
 
-	UPROPERTY(EditDefaultsOnly, Category = Health)
+	UPROPERTY(EditAnywhere, Category = Health)
 	float CurrentHealth = 0.0f;
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = Health)
