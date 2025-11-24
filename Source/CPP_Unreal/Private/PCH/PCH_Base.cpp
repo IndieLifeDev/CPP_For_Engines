@@ -31,9 +31,13 @@ APCH_Base::APCH_Base()
 
 	Health = CreateDefaultSubobject<UHealthComponent>("Health");
 
-	MuzzlePoint = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzlePoint"));
-	MuzzlePoint->SetupAttachment(ShipMesh);
-	MuzzlePoint->SetRelativeLocation(FVector(200, 0, 0));
+	LeftMuzzlePoint = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzlePointLeft"));
+	LeftMuzzlePoint->SetupAttachment(ShipMesh);
+	LeftMuzzlePoint->SetRelativeLocation(FVector(200, 0, 0));
+
+	RightMuzzlePoint = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzlePointRight"));
+	RightMuzzlePoint->SetupAttachment(ShipMesh);
+	RightMuzzlePoint->SetRelativeLocation(FVector(-200, 0, 0));
 	
 	AirFX = CreateDefaultSubobject<UNiagaraComponent>("AirFX");
 	AirFX->SetupAttachment(RootComponent);
@@ -118,6 +122,11 @@ void APCH_Base::Tick(float DeltaTime)
 	FRotator CurrentRotation = ShipMesh->GetRelativeRotation();
 	FRotator TargetRotation = FRotator(TargetRoll, CurrentRotation.Yaw, CurrentRotation.Roll);
 	ShipMesh->SetRelativeRotation(FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, 5.0f));
+
+	FRotator MuzzleRotation = LeftMuzzlePoint->GetRelativeRotation();
+	FRotator MuzzleTargetRotation = FRotator(MuzzleRotation.Pitch, MuzzleRotation.Yaw, TargetRoll);
+	LeftMuzzlePoint->SetRelativeRotation(FMath::RInterpTo(MuzzleRotation, MuzzleTargetRotation, DeltaTime, 5.0f));
+	RightMuzzlePoint->SetRelativeRotation(FMath::RInterpTo(MuzzleRotation, MuzzleTargetRotation, DeltaTime, 5.0f));
 }
 
 // Called to bind functionality to input
@@ -263,7 +272,7 @@ void APCH_Base::SetOverlappedActor_Implementation(AActor* OverlappedActor)
 // Fire Projectile
 void APCH_Base::FireProjectile()
 {
-	if (!ProjectileClass || !MuzzlePoint)
+	if (!ProjectileClass || !LeftMuzzlePoint)
 	{
 		return;
 	}
@@ -271,22 +280,30 @@ void APCH_Base::FireProjectile()
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.Owner = this;
 
-	const FVector SpawnLocation = MuzzlePoint->GetComponentLocation();
-	const FRotator SpawnRotation = MuzzlePoint->GetComponentRotation();
+	const FVector LeftSpawnLocation = LeftMuzzlePoint->GetComponentLocation();
+	const FRotator LeftSpawnRotation = LeftMuzzlePoint->GetComponentRotation();
+	const FVector RightSpawnLocation = RightMuzzlePoint->GetComponentLocation();
+	const FRotator RightSpawnRotation = RightMuzzlePoint->GetComponentRotation();
 
-	AProjectileBase* Projectile = GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass,
-		SpawnLocation, SpawnRotation, SpawnParameters);
+	AProjectileBase* LeftProjectile = GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass,
+		LeftSpawnLocation, LeftSpawnRotation, SpawnParameters);
 
-	if (Projectile)
+	AProjectileBase* RightProjectile = GetWorld()->SpawnActor<AProjectileBase>(ProjectileClass,
+		RightSpawnLocation, RightSpawnRotation, SpawnParameters);
+
+	if (LeftProjectile && RightProjectile)
 	{
 		float ShipSpeed = GetVelocity().Size();
 		float FinalSpeed = BaseProjectileSpeed + ShipSpeed;
 
-		Projectile->ProjectileMovementComponent->InitialSpeed = FinalSpeed;
+		LeftProjectile->ProjectileMovementComponent->InitialSpeed = FinalSpeed;
+		RightProjectile->ProjectileMovementComponent->InitialSpeed = FinalSpeed;
 
-		Projectile->ProjectileMovementComponent->MaxSpeed = FinalSpeed;
+		LeftProjectile->ProjectileMovementComponent->MaxSpeed = FinalSpeed;
+		RightProjectile->ProjectileMovementComponent->MaxSpeed = FinalSpeed;
 
-		Projectile->ProjectileMovementComponent->Velocity = SpawnRotation.Vector() * FinalSpeed;
+		LeftProjectile->ProjectileMovementComponent->Velocity = LeftSpawnRotation.Vector() * FinalSpeed;
+		RightProjectile->ProjectileMovementComponent->Velocity = RightSpawnRotation.Vector() * FinalSpeed;
 	}
 }
 

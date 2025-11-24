@@ -4,10 +4,12 @@
 #include "ProjectileBase.h"
 
 #include "Components/SphereComponent.h"
+#include "CPP_Unreal/PCH/HealthComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 
+class UHealthComponent;
 // Sets default values
 AProjectileBase::AProjectileBase()
 {
@@ -32,8 +34,6 @@ AProjectileBase::AProjectileBase()
 	ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
 
 	SphereComponent->OnComponentHit.AddUniqueDynamic(this, &AProjectileBase::ProjectileHit);
-
-	
 }
 
 // Called when the game starts or when spawned
@@ -52,8 +52,18 @@ void AProjectileBase::Tick(float DeltaTime)
 void AProjectileBase::ProjectileHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	UGameplayStatics::ApplyDamage(OtherActor, BaseDamage, nullptr, this, nullptr);
+	if (!OtherActor || OtherActor == GetOwner())
+	{
+		return;
+	}
+	
+	if (UHealthComponent* HealthComponent = OtherActor->FindComponentByClass<UHealthComponent>())
+	{
+		UGameplayStatics::ApplyDamage(OtherActor, BaseDamage, nullptr, this, nullptr);
+	}
+	
 	// VFX??
+	
 	Destroy();
 }
 

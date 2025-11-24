@@ -103,9 +103,12 @@ protected:
 	bool bIsFiring = false;
 
 	UPROPERTY(VisibleAnywhere, Category = "Combat")
-	USceneComponent* MuzzlePoint;
+	USceneComponent* LeftMuzzlePoint;
 
-	float BaseProjectileSpeed = 4000.0f;
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	USceneComponent* RightMuzzlePoint;
+
+	float BaseProjectileSpeed = 10000.0f;
 
 public:
 	// Called every frame

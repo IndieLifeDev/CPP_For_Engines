@@ -39,8 +39,4 @@ public:
 
 	UPROPERTY(BlueprintAssignable, BlueprintCallable, Category = Health)
 	FOnDeathEvent OnDeath;
-
-	
-
-	
 };
