@@ -16,7 +16,7 @@ AProjectileBase::AProjectileBase()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	InitialLifeSpan = 2.0f;
+	InitialLifeSpan = 1.0f;
 
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	SetRootComponent(SphereComponent);

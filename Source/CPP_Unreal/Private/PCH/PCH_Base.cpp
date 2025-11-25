@@ -290,11 +290,6 @@ void APCH_Base::StopFiring_Implementation()
 {
 	bIsFiring = false;
 
-	if (ShootSound)
-	{
-		UGameplayStatics::PlaySoundAtLocation(
-			this, ShootSound, GetActorLocation(), ShootingAudioVolume);
-	}
 	
 	GetWorld()->GetTimerManager().ClearTimer(FireTimer);
 }
@@ -341,6 +336,12 @@ void APCH_Base::FireProjectile()
 
 		LeftProjectile->ProjectileMovementComponent->Velocity = LeftSpawnRotation.Vector() * FinalSpeed;
 		RightProjectile->ProjectileMovementComponent->Velocity = RightSpawnRotation.Vector() * FinalSpeed;
+	}
+
+	if (ShootSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			this, ShootSound, GetActorLocation(), ShootingAudioVolume);
 	}
 }
 

@@ -41,7 +41,7 @@ public:
 	TObjectPtr<UArrowComponent> FirePoint;
 
 	UPROPERTY(EditDefaultsOnly, Category = "TurretData")
-	float FireSpeed = 0.5f;
+	float FireSpeed = 1.0f;
 
 	UPROPERTY(EditInstanceOnly, Category = "TurretData")
 	FTimerHandle FireTimer;

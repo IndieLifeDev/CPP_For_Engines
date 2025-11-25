@@ -63,6 +63,19 @@ void AObstacleBase::OnObstacleOverlap(UPrimitiveComponent* OverlappedComponent, 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Obstacle hit by projectile: %s"), *OtherActor->GetName());
 		UGameplayStatics::ApplyDamage(this, Projectile->BaseDamage, Projectile->GetInstigatorController(), Projectile, nullptr);
+
+		if (DamageFX)
+		{
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+				this, DamageFX, GetActorLocation(), GetActorRotation());
+		}
+
+		if (HitSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(
+				this, HitSound, GetActorLocation(), HitAudioVolume);
+		}
+		
 		Projectile->Destroy();
 	}
 }

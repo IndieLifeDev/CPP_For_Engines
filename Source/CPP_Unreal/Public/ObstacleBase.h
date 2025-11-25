@@ -37,24 +37,26 @@ public:
 	TObjectPtr<UHealthComponent> Health;
 
 	UPROPERTY(EditAnywhere, Category = "Audio")
+	TObjectPtr<USoundBase> HitSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Audio")
+	float HitAudioVolume = 1.0f;
+	
+	UPROPERTY(EditAnywhere, Category = "Audio")
 	TObjectPtr<USoundBase> DestroySound;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Audio")
 	float DestroyAudioVolume = 1.0f;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+	TObjectPtr<UNiagaraSystem> DamageFX;
 	
 	UPROPERTY(EditAnywhere, Category = "FX")
 	TObjectPtr<UNiagaraSystem> DestroyFX;
-
-	/*UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor,
-		UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);*/
 
 	UFUNCTION()
 	void OnObstacleOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
 	UFUNCTION()
 	void HandleDeath();
-
-	/*UFUNCTION()
-	void HandleDamageTaken(float DamageAmount);*/
 };

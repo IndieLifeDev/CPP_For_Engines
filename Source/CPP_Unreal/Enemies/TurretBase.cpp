@@ -16,11 +16,13 @@ ATurretBase::ATurretBase()
 
 	BaseMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMeshComponent"));
 	SetRootComponent(BaseMeshComponent);
+	BaseMeshComponent->SetRelativeScale3D(FVector(2.0f));
+
 
 	BarrelMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BarrelMeshComponent"));
 	BarrelMeshComponent->SetupAttachment(BaseMeshComponent);
 	BarrelMeshComponent->SetRelativeLocation(FVector(60.0f, 0.0f, 0.0f));
-	BarrelMeshComponent->SetRelativeScale3D(FVector(0.5f));
+	BarrelMeshComponent->SetRelativeScale3D(FVector(1.0f));
 
 	FirePoint = CreateDefaultSubobject<UArrowComponent>(TEXT("FirePoint"));
 	FirePoint->SetupAttachment(BarrelMeshComponent);
