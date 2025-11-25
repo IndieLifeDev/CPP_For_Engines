@@ -8,9 +8,11 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "CPP_Unreal/PCH/HealthComponent.h"
 #include "NiagaraComponent.h"
+#include "Components/AudioComponent.h"
 #include "CPP_Unreal/Enemies/ProjectileBase.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Interactables/InteractionInterface.h"
+#include "Kismet/GameplayStatics.h"
 #include "PCH/PC_Base.h"
 
 // Sets default values
@@ -46,6 +48,10 @@ APCH_Base::APCH_Base()
 	BoostFX->SetupAttachment(RootComponent);
 	BoostFX->bAutoActivate = false;
 
+	BoostAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("BoostAudio"));
+	BoostAudioComponent->SetupAttachment(RootComponent);
+	BoostAudioComponent->bAutoActivate = false;
+
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
@@ -64,6 +70,12 @@ void APCH_Base::BeginPlay()
 	{
 		AirFX->SetAsset(AirFXSystem);
 		AirFX->Activate();
+	}
+
+	if (FlyingSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			this, FlyingSound, GetActorLocation(), FlyingAudioVolume);
 	}
 
 	if (Health)
@@ -212,6 +224,12 @@ void APCH_Base::BoostAction_Implementation(const FInputActionInstance& Instance)
 		BoostFX->SetAsset(BoostFXSystem);
 		BoostFX->Activate();
 	}
+
+	if (BoostAudioComponent && !BoostAudioComponent->IsPlaying())
+	{
+		BoostAudioComponent->Play();
+	}
+	
 	Camera->FieldOfView = BoostFOV;
 }
 
@@ -226,6 +244,12 @@ void APCH_Base::BoostStopAction_Implementation(const FInputActionInstance& Insta
 	{
 		BoostFX->Deactivate();
 	}
+
+	if (BoostAudioComponent && BoostAudioComponent->IsPlaying())
+	{
+		BoostAudioComponent->FadeOut(0.25f, 0.0f);
+	}
+	
 	Camera->FieldOfView = DefaultFOV;
 }
 
@@ -250,6 +274,13 @@ void APCH_Base::StartFiring_Implementation()
 	{
 		bIsFiring = true;
 		FireProjectile();
+
+		if (ShootSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(
+				this, ShootSound, GetActorLocation(), ShootingAudioVolume);
+		}
+		
 		GetWorld()->GetTimerManager().SetTimer(FireTimer, this, &APCH_Base::FireProjectile, FireRate, true);
 	}
 }
@@ -258,6 +289,13 @@ void APCH_Base::StartFiring_Implementation()
 void APCH_Base::StopFiring_Implementation()
 {
 	bIsFiring = false;
+
+	if (ShootSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			this, ShootSound, GetActorLocation(), ShootingAudioVolume);
+	}
+	
 	GetWorld()->GetTimerManager().ClearTimer(FireTimer);
 }
 

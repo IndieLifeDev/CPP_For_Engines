@@ -3,9 +3,9 @@
 
 #include "ObstacleBase.h"
 
-#include "NiagaraFunctionLibrary.h"
 #include "CPP_Unreal/Enemies/ProjectileBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "NiagaraFunctionLibrary.h"
 
 // Sets default values
 AObstacleBase::AObstacleBase()

@@ -14,6 +14,7 @@ class UHealthComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UNiagaraComponent;
+class UAudioComponent;
 
 UCLASS()
 class CPP_UNREAL_API APCH_Base : public ACharacter, public IIA_Interface, public IPCH_Interface
@@ -52,6 +53,26 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effects")
 	UNiagaraSystem* BoostFXSystem;
 
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	TObjectPtr<USoundBase> FlyingSound;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Audio")
+	float FlyingAudioVolume = 1.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	TObjectPtr<UAudioComponent> BoostAudioComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	TObjectPtr<USoundBase> BoostSound;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Audio")
+	float BoostAudioVolume = 1.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	TObjectPtr<USoundBase> ShootSound;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Audio")
+	float ShootingAudioVolume = 1.0f;
 
 	// Current Ship Speed
 	UPROPERTY(EditAnywhere, Category = "Movement")

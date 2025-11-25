@@ -9,6 +9,7 @@
 class USphereComponent;
 class UStaticMeshComponent;
 class UProjectileMovementComponent;
+class UNiagaraSystem;
 
 UCLASS()
 class CPP_UNREAL_API AProjectileBase : public AActor
@@ -38,6 +39,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	float BaseDamage = 50.0f;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+	TObjectPtr<UNiagaraSystem> HitEffect;
 
 	UFUNCTION()
 	void OnProjectileOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,

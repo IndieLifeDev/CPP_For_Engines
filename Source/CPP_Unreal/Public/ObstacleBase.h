@@ -42,7 +42,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Audio")
 	float DestroyAudioVolume = 1.0f;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
+	UPROPERTY(EditAnywhere, Category = "FX")
 	TObjectPtr<UNiagaraSystem> DestroyFX;
 
 	/*UFUNCTION()

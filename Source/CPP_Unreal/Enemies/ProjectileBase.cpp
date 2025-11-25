@@ -7,9 +7,10 @@
 #include "CPP_Unreal/PCH/HealthComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "NiagaraFunctionLibrary.h"
 
 class UHealthComponent;
+
 // Sets default values
 AProjectileBase::AProjectileBase()
 {
@@ -69,6 +70,12 @@ void AProjectileBase::OnProjectileOverlap(UPrimitiveComponent* OverlappedCompone
 
 		UGameplayStatics::ApplyDamage(OtherActor, BaseDamage, nullptr, this, nullptr);
 
+		if (HitEffect)
+		{
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, HitEffect,
+				OtherActor->GetActorLocation(), GetActorRotation());
+		}
+		
 		Destroy();
 	}
 }
